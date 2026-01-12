@@ -7,7 +7,7 @@ export const resumes: Resume[] = [
     resumePath: "/resumes/resume-1.pdf",
     feedback: {
       overallScore: 85,
-      ATS: {
+      ATS: { 
         score: 90,
         tips: [],
       },
