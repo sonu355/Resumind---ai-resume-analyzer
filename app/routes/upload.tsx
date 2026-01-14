@@ -2,8 +2,10 @@ import React, { type FormEvent } from 'react'
 import Navbar from '~/components/Navbar'
 import { useState } from 'react';
 import FileUploader from '~/components/FileUploader';
+import { usePuterStore } from '~/lib/puter'
 
 const upload = () => {
+    const { isLoading, auth, fs, ai, kv } = usePuterStore();
     const [isProcessing, setIsProcessing] = useState(false);
     const [statusText, setStatusText] = useState('')
     const [file, setFile] = useState<File | null>(null);
@@ -13,7 +15,9 @@ const upload = () => {
     }
 
     const handleAnalyze = async({companyName, jobTitle, jobDescription, file} : {companyName: string, jobTitle: string, jobDescription: string, file: File}) => {
-
+        setIsProcessing(true);
+        setStatusText('Uploading the file...')
+        const uploadedFile = await fs.upload([file])
     }
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -22,14 +26,15 @@ const upload = () => {
         if(!form) return;
         const formData = new FormData(form);
 
-        const companyName = formData.get('company-name');
-        const jobTitle = formData.get('job-title');
-        const jobDescription = formData.get('job-description');
+        const companyName = formData.get('company-name') as string;
+        const jobTitle = formData.get('job-title') as string;
+        const jobDescription = formData.get('job-description') as string;
 
         console.log({
             companyName, jobTitle, jobDescription, file
         })
 
+        if(!file) return;
         handleAnalyze({ companyName, jobTitle, jobDescription, file})
     }
   
