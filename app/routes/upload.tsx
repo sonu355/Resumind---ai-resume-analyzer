@@ -12,6 +12,10 @@ const upload = () => {
         setFile(file)
     }
 
+    const handleAnalyze = async({companyName, jobTitle, jobDescription, file} : {companyName: string, jobTitle: string, jobDescription: string, file: File}) => {
+
+    }
+
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const form = e.currentTarget.closest('form');
@@ -25,6 +29,8 @@ const upload = () => {
         console.log({
             companyName, jobTitle, jobDescription, file
         })
+
+        handleAnalyze({ companyName, jobTitle, jobDescription, file})
     }
   
     return (

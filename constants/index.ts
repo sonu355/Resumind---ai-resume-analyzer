@@ -158,7 +158,7 @@ export const resumes: Resume[] = [
     feedback: {
       overallScore: 75,
       ATS: {
-        score: 90,
+        score: 80,
         tips: [],
       },
       toneAndStyle: {
