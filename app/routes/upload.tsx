@@ -6,14 +6,14 @@ import { usePuterStore } from '~/lib/puter'
 import { useNavigate } from 'react-router';
 import { convertPdfToImage } from '~/lib/pdf2img';
 import { generateUUID } from '~/lib/utils';
+import { prepareInstructions } from '../../constants'
 
 const upload = () => {
     const { isLoading, auth, fs, ai, kv } = usePuterStore();
     const [isProcessing, setIsProcessing] = useState(false);
     const [statusText, setStatusText] = useState('')
     const [file, setFile] = useState<File | null>(null);
-    const navigate = useNavigate();
-    
+    const navigate = useNavigate();    
 
     const handleFileSelect = (file: File | null) => {
         setFile(file)
@@ -28,11 +28,12 @@ const upload = () => {
 
         setStatusText('Converting to image...')
         const imageFile = await convertPdfToImage(file);
+        console.log(imageFile)
         if(!imageFile.file) return setStatusText('Error: Failed to convert PDF to image...')
 
         setStatusText('Uploading the image...')
         const uploadedImage = await fs.upload([imageFile.file]);
-         if(!uploadedFile) return setStatusText('Failed to upload file.');
+         if(!uploadedImage) return setStatusText('Failed to upload file.');
 
         setStatusText('Preparing data...')
         const uuid = generateUUID();
@@ -45,6 +46,20 @@ const upload = () => {
         }
         await kv.set(`resume_${uuid}`, JSON.stringify(data))
         setStatusText('Analyzing resume with AI...')
+        const feedback = await ai.feedback(
+            uploadedFile.path,
+            prepareInstructions({ jobTitle, jobDescription})
+        )
+        if(!feedback) return setStatusText('Error: failed to analyze resume')
+
+        const feedbackText = typeof feedback.message.content === 'string' 
+            ? feedback.message.content
+            : feedback.message.content[0].text; 
+
+        data.feedback = JSON.parse(feedbackText);
+        await kv.set(`resume_${uuid}`, JSON.stringify(data));
+        setStatusText('Analysis Completed, redirecting...')
+        console.log(data);
     }
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
