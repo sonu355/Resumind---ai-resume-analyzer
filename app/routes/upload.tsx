@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router';
 import { convertPdfToImage } from '~/lib/pdf2img';
 import { generateUUID } from '~/lib/utils';
 import { prepareInstructions } from '../../constants'
+// import { CLIENT_RENEG_LIMIT } from 'tls';
 
 const upload = () => {
     const { isLoading, auth, fs, ai, kv } = usePuterStore();
@@ -60,6 +61,8 @@ const upload = () => {
         await kv.set(`resume_${uuid}`, JSON.stringify(data));
         setStatusText('Analysis Completed, redirecting...')
         console.log(data);
+        navigate(`/resume/${uuid}`);
+        console.log(uuid)
     }
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
