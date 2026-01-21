@@ -16,6 +16,8 @@ const Resume = () => {
     const [feedback, setFeedback] = useState('')
     const navigate = useNavigate();
 
+    
+
     useEffect(() => {
         const loadResume = async () => {
             const resume = await kv.get(`resume:${id}`)
@@ -37,9 +39,12 @@ const Resume = () => {
             setImageUrl(imageUrl);
 
             setFeedback(data.feedback);
+            console.log(imageUrl, resumeUrl, data.feedback)
         } 
+        loadResume();
     }, [id])
 
+    
     return(
         <main className="!pt-0">
             <nav className="resume-nav">
